@@ -1,0 +1,18 @@
+# Flask Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Database
+mysql-connector-python==8.2.0
+
+# Image Processing & OCR
+opencv-python==4.8.1.78
+pytesseract==0.3.10
+Pillow==10.1.0
+numpy==1.26.2
+
+# AI Assistants
+google-generativeai==0.3.2
+
+# Utilities
+python-dotenv==1.0.0

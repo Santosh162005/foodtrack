@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Expiry Tracker - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-apple-alt"></i> Food Expiry Tracker
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('index') }}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-chart-bar"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            <i class="fas fa-user"></i> {{ session.username }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Upload Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-camera"></i> Add New Food Item</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Image Upload -->
+                    <div class="col-md-6">
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                            <p>Click to upload or drag and drop</p>
+                            <p class="text-muted">Supports: JPG, PNG, JPEG (Max 16MB)</p>
+                            <input type="file" id="fileInput" accept="image/*" class="d-none">
+                        </div>
+                        <div id="imagePreview" class="mt-3 d-none">
+                            <img id="previewImg" src="" alt="Preview" class="img-fluid rounded">
+                        </div>
+                        <div id="ocrStatus" class="mt-3"></div>
+                    </div>
+
+                    <!-- Manual Entry Form -->
+                    <div class="col-md-6">
+                        <form id="addFoodForm" action="{{ url_for('add_food') }}" method="POST">
+                            <input type="hidden" name="image_path" id="imagePath">
+                            
+                            <div class="mb-3">
+                                <label for="foodName" class="form-label">Food Name *</label>
+                                <input type="text" class="form-control" id="foodName" name="food_name" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="expiryDate" class="form-label">Expiry Date *</label>
+                                <input type="date" class="form-control" id="expiryDate" name="expiry_date" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="purchaseDate" class="form-label">Purchase Date</label>
+                                <input type="date" class="form-control" id="purchaseDate" name="purchase_date">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select" id="category" name="category">
+                                    <option value="Other">Other</option>
+                                    <option value="Dairy">Dairy</option>
+                                    <option value="Vegetables">Vegetables</option>
+                                    <option value="Fruits">Fruits</option>
+                                    <option value="Meat & Poultry">Meat & Poultry</option>
+                                    <option value="Seafood">Seafood</option>
+                                    <option value="Beverages">Beverages</option>
+                                    <option value="Bakery">Bakery</option>
+                                    <option value="Frozen Foods">Frozen Foods</option>
+                                    <option value="Canned Goods">Canned Goods</option>
+                                    <option value="Condiments">Condiments</option>
+                                    <option value="Snacks">Snacks</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Quantity</label>
+                                <input type="text" class="form-control" id="quantity" name="quantity" placeholder="e.g., 1 pack, 500g">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-plus"></i> Add Food Item
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Food Items List -->
+        <div class="card">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-list"></i> Your Food Items</h5>
+                <div>
+                    <button class="btn btn-sm btn-light" id="filterAll">All</button>
+                    <button class="btn btn-sm btn-success" id="filterFresh">Fresh</button>
+                    <button class="btn btn-sm btn-warning" id="filterNearExpiry">Near Expiry</button>
+                    <button class="btn btn-sm btn-danger" id="filterExpired">Expired</button>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if food_items %}
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="foodTable">
+                            <thead>
+                                <tr>
+                                    <th>Food Name</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Purchase Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Days Left</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in food_items %}
+                                <tr data-status="{{ item.status }}">
+                                    <td><strong>{{ item.food_name }}</strong></td>
+                                    <td>{{ item.category }}</td>
+                                    <td>{{ item.quantity or '-' }}</td>
+                                    <td>{{ item.purchase_date if item.purchase_date else '-' }}</td>
+                                    <td>{{ item.expiry_date }}</td>
+                                    <td>
+                                        {% if item.days_remaining >= 0 %}
+                                            {{ item.days_remaining }} days
+                                        {% else %}
+                                            {{ -item.days_remaining }} days ago
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.status == 'Fresh' %}
+                                            <span class="badge bg-success">Fresh</span>
+                                        {% elif item.status == 'Near Expiry' %}
+                                            <span class="badge bg-warning">Near Expiry</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Expired</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger delete-btn" data-food-id="{{ item.id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-inbox fa-3x"></i>
+                        <p class="mt-3">No food items added yet. Start by uploading an image or adding manually!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chatbot -->
+    {% include 'ai_chatbot.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+</body>
+</html>

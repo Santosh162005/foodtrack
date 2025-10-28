@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Food Expiry Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-apple-alt"></i> Food Expiry Tracker
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-chart-bar"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            <i class="fas fa-user"></i> {{ session.username }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="mb-4"><i class="fas fa-chart-line"></i> Analytics Dashboard</h2>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-list"></i> Total Items</h5>
+                        <h2>{{ stats.total_items or 0 }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-check-circle"></i> Fresh</h5>
+                        <h2>{{ stats.fresh_count or 0 }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-exclamation-triangle"></i> Near Expiry</h5>
+                        <h2>{{ stats.near_expiry_count or 0 }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-times-circle"></i> Expired</h5>
+                        <h2>{{ stats.expired_count or 0 }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <!-- Category Distribution -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-pie-chart"></i> Category Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Distribution -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-chart-pie"></i> Status Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Trend -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-chart-line"></i> Monthly Expiry Trend (Last 6 Months)</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Near Expiry Items & Recipe Suggestions -->
+        <div class="row">
+            <!-- Near Expiry Items -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5><i class="fas fa-bell"></i> Items Near Expiry</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if near_expiry_items %}
+                            <ul class="list-group">
+                                {% for item in near_expiry_items %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ item.food_name }}</strong><br>
+                                        <small class="text-muted">Expires: {{ item.expiry_date }}</small>
+                                    </div>
+                                    <span class="badge bg-warning rounded-pill">
+                                        {{ item.days_remaining|int }} days
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted text-center py-3">No items near expiry!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Recipe Suggestions -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-robot"></i> AI Recipe Suggestions</h5>
+                        <div>
+                            {% if ai_recipes %}
+                            <button class="btn btn-light btn-sm me-2" onclick="regenerateRecipes()">
+                                <i class="fas fa-sync-alt"></i> Regenerate
+                            </button>
+                            {% else %}
+                            <button class="btn btn-light btn-sm" onclick="generateRecipes()">
+                                <i class="fas fa-magic"></i> Generate Recipes
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body" id="recipeContainer">
+                        {% if ai_recipes %}
+                            <!-- AI Generated Recipes Accordion -->
+                            <div class="alert alert-success mb-3">
+                                <i class="fas fa-robot"></i> <strong>{{ ai_recipes|length }} AI-Powered Recipes</strong> generated from your near-expiry items!
+                                <small class="d-block mt-1 text-muted">Cached for faster loading</small>
+                            </div>
+                            
+                            <div class="accordion" id="aiRecipeAccordion">
+                                {% for recipe in ai_recipes %}
+                                <div class="accordion-item mb-2">
+                                    <h2 class="accordion-header" id="aiHeading{{ loop.index }}">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#aiCollapse{{ loop.index }}" aria-expanded="false">
+                                            <i class="fas fa-sparkles text-success me-2"></i>
+                                            <strong>{{ recipe.recipe_name }}</strong>
+                                            <span class="badge bg-success ms-auto me-2">
+                                                <i class="fas fa-clock"></i> {{ recipe.cooking_time }}
+                                            </span>
+                                        </button>
+                                    </h2>
+                                    <div id="aiCollapse{{ loop.index }}" class="accordion-collapse collapse" 
+                                         data-bs-parent="#aiRecipeAccordion">
+                                        <div class="accordion-body">
+                                            <!-- Description -->
+                                            <p class="text-muted fst-italic mb-3">
+                                                <i class="fas fa-info-circle"></i> {{ recipe.description }}
+                                            </p>
+                                            
+                                            <!-- Meta Info -->
+                                            <div class="d-flex gap-2 mb-3">
+                                                <span class="badge bg-info">
+                                                    <i class="fas fa-clock"></i> {{ recipe.cooking_time }}
+                                                </span>
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="fas fa-users"></i> {{ recipe.servings }}
+                                                </span>
+                                            </div>
+                                            
+                                            <!-- Ingredients -->
+                                            <div class="mb-3">
+                                                <h6 class="text-success">
+                                                    <i class="fas fa-shopping-basket"></i> Ingredients:
+                                                </h6>
+                                                <ul class="list-unstyled ms-3">
+                                                    {% for ingredient in recipe.ingredients %}
+                                                    <li class="mb-1">
+                                                        <i class="fas fa-check-circle text-success"></i> {{ ingredient }}
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                            
+                                            <!-- Instructions -->
+                                            <div class="mb-3">
+                                                <h6 class="text-primary">
+                                                    <i class="fas fa-list-ol"></i> Instructions:
+                                                </h6>
+                                                <ol class="ms-3">
+                                                    {% for step in recipe.instructions %}
+                                                    <li class="mb-2">{{ step }}</li>
+                                                    {% endfor %}
+                                                </ol>
+                                            </div>
+                                            
+                                            <!-- Tips -->
+                                            {% if recipe.tips %}
+                                            <div class="alert alert-info mb-3">
+                                                <i class="fas fa-lightbulb"></i> <strong>Pro Tip:</strong> {{ recipe.tips }}
+                                            </div>
+                                            {% endif %}
+                                            
+                                            <!-- Actions -->
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-success btn-sm flex-fill" 
+                                                        onclick="showToast('Recipe saved to your collection!', 'success')">
+                                                    <i class="fas fa-bookmark"></i> Save Recipe
+                                                </button>
+                                                <button class="btn btn-primary btn-sm flex-fill" 
+                                                        onclick="showToast('Recipe shared!', 'info')">
+                                                    <i class="fas fa-share-alt"></i> Share
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                        {% elif fallback_recipes %}
+                            <!-- Fallback Static Recipes -->
+                            <div class="accordion" id="recipeAccordion">
+                                {% for recipe in fallback_recipes %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading{{ loop.index }}">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#collapse{{ loop.index }}">
+                                            {{ recipe.name }}
+                                        </button>
+                                    </h2>
+                                    <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" 
+                                         data-bs-parent="#recipeAccordion">
+                                        <div class="accordion-body">
+                                            <p><strong>Ingredients:</strong></p>
+                                            <ul>
+                                                {% for ingredient in recipe.ingredients %}
+                                                <li>{{ ingredient }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                            <p><strong>Instructions:</strong></p>
+                                            <p>{{ recipe.instructions }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-robot fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">
+                                    Add items near expiry to get AI-powered recipe suggestions!
+                                </p>
+                                <button class="btn btn-primary btn-sm" onclick="window.location.href='{{ url_for('index') }}'">
+                                    <i class="fas fa-plus"></i> Add Food Items
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Category Distribution Chart
+        const categoryData = {{ category_data | tojson }};
+        const categoryLabels = categoryData.map(item => item.category);
+        const categoryCounts = categoryData.map(item => item.count);
+
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    data: categoryCounts,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                        '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
+                        '#36A2EB', '#FFCE56'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Status Distribution Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Fresh', 'Near Expiry', 'Expired'],
+                datasets: [{
+                    data: [
+                        {{ stats.fresh_count or 0 }},
+                        {{ stats.near_expiry_count or 0 }},
+                        {{ stats.expired_count or 0 }}
+                    ],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Monthly Trend Chart
+        const monthlyData = {{ monthly_trend | tojson }};
+        const monthLabels = monthlyData.map(item => item.month);
+        const expiredCounts = monthlyData.map(item => item.expired_count);
+
+        const monthlyCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+        new Chart(monthlyCtx, {
+            type: 'line',
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: 'Expired Items',
+                    data: expiredCounts,
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script>
+        // Generate AI recipes function
+        function generateRecipes() {
+            const progress = showProgressBar();
+            showLoadingScreen('🤖 AI is creating delicious recipes...');
+            
+            fetch('/ai/generate-recipes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                completeProgressBar(progress);
+                hideLoadingScreen();
+                if (data.success) {
+                    showToast(`Generated ${data.count} AI recipes!`, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showToast(data.message, 'warning');
+                }
+            })
+            .catch(error => {
+                completeProgressBar(progress);
+                hideLoadingScreen();
+                showToast('Error generating recipes', 'error');
+                console.error('Error:', error);
+            });
+        }
+
+        // Regenerate recipes function
+        function regenerateRecipes() {
+            const progress = showProgressBar();
+            showLoadingScreen('🔄 Creating fresh recipe ideas...');
+            
+            fetch('/ai/regenerate-recipes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Now generate new recipes
+                    return generateRecipes();
+                } else {
+                    completeProgressBar(progress);
+                    hideLoadingScreen();
+                    showToast('Error: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                completeProgressBar(progress);
+                hideLoadingScreen();
+                showToast('Error regenerating recipes', 'error');
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+
+    <!-- AI Chatbot -->
+    {% include 'ai_chatbot.html' %}
+</body>
+</html>

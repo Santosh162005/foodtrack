@@ -1,0 +1,127 @@
+[
+    {
+        "name": "Vegetable Stir Fry",
+        "ingredients": ["vegetables", "onion", "garlic", "soy sauce", "oil"],
+        "instructions": "Heat oil in a wok. Add garlic and onion, stir-fry for 1 minute. Add vegetables and stir-fry for 5-7 minutes. Add soy sauce and serve hot with rice."
+    },
+    {
+        "name": "Fruit Smoothie",
+        "ingredients": ["banana", "apple", "strawberry", "milk", "yogurt", "honey"],
+        "instructions": "Blend all fruits with milk, yogurt, and honey until smooth. Add ice if desired. Serve immediately."
+    },
+    {
+        "name": "Chicken Curry",
+        "ingredients": ["chicken", "onion", "tomato", "curry powder", "coconut milk", "garlic", "ginger"],
+        "instructions": "Sauté onions, garlic, and ginger. Add chicken and brown. Add tomatoes and curry powder. Pour coconut milk and simmer for 20 minutes. Serve with rice."
+    },
+    {
+        "name": "Tomato Pasta",
+        "ingredients": ["pasta", "tomato", "garlic", "basil", "olive oil", "cheese"],
+        "instructions": "Cook pasta according to package. Sauté garlic in olive oil, add chopped tomatoes and basil. Mix with pasta, top with cheese."
+    },
+    {
+        "name": "Egg Fried Rice",
+        "ingredients": ["rice", "egg", "vegetables", "soy sauce", "garlic", "oil"],
+        "instructions": "Heat oil, scramble eggs and set aside. Fry garlic and vegetables. Add cooked rice and soy sauce. Mix in eggs and serve hot."
+    },
+    {
+        "name": "Vegetable Soup",
+        "ingredients": ["carrot", "potato", "onion", "celery", "vegetable broth", "salt", "pepper"],
+        "instructions": "Sauté onions and celery. Add chopped vegetables and broth. Simmer until tender. Season with salt and pepper. Blend if desired."
+    },
+    {
+        "name": "Cheese Sandwich",
+        "ingredients": ["bread", "cheese", "butter", "tomato", "lettuce"],
+        "instructions": "Butter bread slices. Add cheese, tomato slices, and lettuce. Grill or toast until cheese melts. Serve hot."
+    },
+    {
+        "name": "Banana Pancakes",
+        "ingredients": ["banana", "egg", "flour", "milk", "baking powder", "butter"],
+        "instructions": "Mash bananas. Mix with eggs, flour, milk, and baking powder. Cook spoonfuls on buttered griddle until golden. Serve with syrup."
+    },
+    {
+        "name": "Chicken Salad",
+        "ingredients": ["chicken", "lettuce", "tomato", "cucumber", "olive oil", "lemon", "salt"],
+        "instructions": "Dice cooked chicken. Mix with chopped vegetables. Dress with olive oil, lemon juice, and salt. Serve fresh."
+    },
+    {
+        "name": "Beef Stew",
+        "ingredients": ["beef", "potato", "carrot", "onion", "beef broth", "tomato paste"],
+        "instructions": "Brown beef cubes. Add onions and cook. Add vegetables, broth, and tomato paste. Simmer for 1.5 hours until tender."
+    },
+    {
+        "name": "Fish Tacos",
+        "ingredients": ["fish", "tortilla", "cabbage", "lime", "sour cream", "cilantro"],
+        "instructions": "Season and grill fish. Warm tortillas. Top with fish, shredded cabbage, sour cream, cilantro, and lime juice."
+    },
+    {
+        "name": "Yogurt Parfait",
+        "ingredients": ["yogurt", "granola", "berries", "honey", "banana"],
+        "instructions": "Layer yogurt with granola and fresh berries in a glass. Drizzle with honey. Top with banana slices."
+    },
+    {
+        "name": "Vegetable Pizza",
+        "ingredients": ["pizza dough", "tomato sauce", "cheese", "bell pepper", "mushroom", "onion"],
+        "instructions": "Spread sauce on dough. Top with cheese and vegetables. Bake at 220°C for 15-20 minutes until crust is golden."
+    },
+    {
+        "name": "Potato Curry",
+        "ingredients": ["potato", "onion", "tomato", "curry powder", "coconut milk", "garlic"],
+        "instructions": "Sauté onions and garlic. Add cubed potatoes and brown slightly. Add tomatoes, curry powder, and coconut milk. Simmer until potatoes are tender."
+    },
+    {
+        "name": "Apple Pie",
+        "ingredients": ["apple", "flour", "butter", "sugar", "cinnamon", "egg"],
+        "instructions": "Make dough with flour, butter, and egg. Slice apples and mix with sugar and cinnamon. Fill pie crust and bake at 180°C for 45 minutes."
+    },
+    {
+        "name": "Mushroom Risotto",
+        "ingredients": ["rice", "mushroom", "onion", "white wine", "parmesan", "butter", "vegetable broth"],
+        "instructions": "Sauté onions and mushrooms. Add rice and toast. Add wine and broth gradually while stirring. Finish with butter and parmesan."
+    },
+    {
+        "name": "Caesar Salad",
+        "ingredients": ["lettuce", "chicken", "parmesan", "croutons", "caesar dressing", "lemon"],
+        "instructions": "Tear lettuce into bowl. Add sliced grilled chicken, parmesan shavings, and croutons. Toss with caesar dressing and lemon juice."
+    },
+    {
+        "name": "Chocolate Smoothie",
+        "ingredients": ["banana", "cocoa powder", "milk", "honey", "ice"],
+        "instructions": "Blend banana, cocoa powder, milk, honey, and ice until smooth and creamy. Serve immediately."
+    },
+    {
+        "name": "Grilled Cheese",
+        "ingredients": ["bread", "cheese", "butter"],
+        "instructions": "Butter outside of bread slices. Place cheese between slices. Grill on medium heat until golden brown and cheese melts."
+    },
+    {
+        "name": "Omelette",
+        "ingredients": ["egg", "cheese", "tomato", "onion", "bell pepper", "salt", "butter"],
+        "instructions": "Beat eggs with salt. Melt butter in pan. Pour eggs and cook. Add cheese and vegetables. Fold and serve hot."
+    },
+    {
+        "name": "Carrot Cake",
+        "ingredients": ["carrot", "flour", "egg", "sugar", "oil", "cinnamon", "cream cheese"],
+        "instructions": "Mix grated carrots with flour, eggs, sugar, oil, and cinnamon. Bake at 180°C for 40 minutes. Frost with cream cheese frosting."
+    },
+    {
+        "name": "Seafood Paella",
+        "ingredients": ["rice", "shrimp", "fish", "mussels", "saffron", "tomato", "peas"],
+        "instructions": "Sauté seafood and set aside. Cook rice with saffron, tomatoes, and broth. Add seafood and peas. Cook until rice is tender."
+    },
+    {
+        "name": "Lentil Soup",
+        "ingredients": ["lentils", "carrot", "onion", "garlic", "tomato", "vegetable broth", "cumin"],
+        "instructions": "Sauté onions, garlic, and carrots. Add lentils, tomatoes, broth, and cumin. Simmer for 30 minutes until lentils are tender."
+    },
+    {
+        "name": "Berry Muffins",
+        "ingredients": ["flour", "egg", "milk", "sugar", "butter", "blueberry", "strawberry", "baking powder"],
+        "instructions": "Mix dry ingredients. Add eggs, milk, and melted butter. Fold in berries. Bake in muffin tins at 180°C for 20 minutes."
+    },
+    {
+        "name": "Chicken Wrap",
+        "ingredients": ["tortilla", "chicken", "lettuce", "tomato", "cheese", "mayo", "cucumber"],
+        "instructions": "Place grilled chicken on tortilla. Add lettuce, tomato, cucumber, cheese, and mayo. Roll tightly and serve."
+    }
+]
